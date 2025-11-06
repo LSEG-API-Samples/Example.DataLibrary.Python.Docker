@@ -1,0 +1,11 @@
+lseg-data-devrel.config.json
+LICENSE.md
+README.md
+.gitignore
+lseg-data.config.json_bk
+.git
+__pycache__/
+*.pyc
+.env
+.vscode/
+.ds_store
