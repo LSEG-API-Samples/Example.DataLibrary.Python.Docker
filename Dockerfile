@@ -1,7 +1,6 @@
-#Build stage
 ARG PYTHON_VERSION=3.12
 ARG VARIANT=slim-bookworm
-FROM docker.io/python:${PYTHON_VERSION}-slim-bookworm 
+FROM docker.io/python:${PYTHON_VERSION}-{VARIANT}
 
 LABEL maintainer="LSEG Developer Relations"
 
