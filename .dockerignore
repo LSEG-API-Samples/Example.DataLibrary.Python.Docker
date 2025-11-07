@@ -1,4 +1,5 @@
 lseg-data-devrel.config.json
+lseg-data-devrel.config.json
 LICENSE.md
 README.md
 .gitignore
@@ -9,3 +10,5 @@ __pycache__/
 .env
 .vscode/
 .ds_store
+venv/
+*.log
