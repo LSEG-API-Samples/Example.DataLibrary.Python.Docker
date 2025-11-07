@@ -1,24 +1,40 @@
-# How to run Data Library for Python in Docker
+# How to Run Data Library for Python in Docker
 
 ## Overview
 
-This example project shows how to use [LSEG Data Library for Python](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python) (aka Data Library version 2) with Container using the Platform Session.
+This project demonstrates how to run the [LSEG Data Library for Python](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python) (aka Data Library version 2) inside a container. This means you can package the application and run it anywhere without worrying about installing Python or managing dependencies on your local machine.
 
-I am demonstrating with library version 2.1.1,Python 3.12, and [Podman](https://podman-desktop.io/) as a Containerization tool. However, the project supports [Docker](https://www.docker.com/) as well.
+**What you'll learn:**
+- How to containerize a Python application that accesses LSEG financial data
+- How to connect to LSEG's cloud platform (Platform Session) from within a container
+- How to build and run containers using Docker or Podman
 
-## <a id="prerequisite"></a> Prerequisite
+**Technology used:**
+- Data Library for Python version 2.1.1
+- Python 3.12
+- Docker or Podman (containerization tools)
 
-This example requires the following dependencies.
+## What You'll Need
 
-1. Delivery Platform (aka Data Platform) credential with Pricing and Historical Pricing permission.
-2. [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Podman](https://podman-desktop.io/) Containerization tool.
-3. Internet connection.
+Before you begin, make sure you have:
 
-Please contact your LSEG representative to help you to access the RTO account and services.
+1. **LSEG Credentials**: An account with access to the Delivery Platform (Data Platform) that includes Pricing and Historical Pricing permissions
+   - *Don't have credentials?* Contact your LSEG representative for access
+2. **Containerization Tool**: Either [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Podman](https://podman-desktop.io/) installed on your computer
+3. **Internet Connection**: Required to download packages and connect to LSEG services
 
-## <a id="rdp_lib"></a>Introduction to the Data Library for Python
+## About the Data Library for Python
 
-The [Data Library for Python](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python) provides a set of ease-of-use interfaces offering coders uniform access to the breadth and depth of financial data and services available on the Workspace, RDP, and Real-Time Platforms. The API is designed to provide consistent access through multiple access channels and target both Professional Developers and Financial Coders. Developers can choose to access content from the desktop, through their deployed streaming services, or directly to the cloud. With the Data Library, the same Python code can be used to retrieve data regardless of which access point you choose to connect to the platform.
+The [Data Library for Python](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python) is a powerful toolkit that gives you easy access to LSEG's vast collection of financial data and services. Think of it as a universal adapter that lets you access the same data whether you're working from:
+
+- Your desktop (Workspace application)
+- The cloud (Delivery Platform)
+- Real-time streaming services
+
+**Key benefits:**
+- Write code once, use it across multiple platforms
+- Simple, consistent interface regardless of your data source
+- Available in Python, .NET, and TypeScript
 
 ![Figure-1](images/datalib_image.png "Data Library Diagram") 
 
@@ -28,57 +44,42 @@ The Data Library are available in the following programming languages:
 - [.NET](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-net)
 - [TypeScript](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-typescript)
 
-For more deep detail regarding the Data Library for Python, please refer to the following articles and tutorials:
+**Want to learn more?** Check out these resources:
+- [Quick Start Guide](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python/quick-start)
+- [Full Documentation](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python/documentation)
+- [Step-by-Step Tutorials](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python/tutorials)
+- [Code Examples on GitHub](https://github.com/LSEG-API-Samples/Example.DataLibrary.Python)
 
-- [Quickstart](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python/quick-start).
-- [Documentation](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python/documentation).
-- [Tutorials](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python/tutorials).
-- [GitHub](https://github.com/LSEG-API-Samples/Example.DataLibrary.Python).
+## Why Use "Platform Session" for Containers?
 
-## Why Platform Session?
+The Data Library can connect to data in different ways:
 
-The Data Library supports Workspace ("Desktop Session"), Delivery/Data Platform ("Platform Session"), and the Real-Time Platform.  The "Desktop Session" needs the [LSEG Workspace Desktop Application](https://www.lseg.com/en/data-analytics/search/workspace) as an api proxy between the library and the Workspace platform. However, the Workspace desktop application does not support Containerization, so you cannot use a "Desktop Session".
+- **Desktop Session**: Requires the LSEG Workspace desktop application running on your computer
+- **Platform Session**: Connects directly to LSEG's [Delivery Platform](https://developers.lseg.com/en/api-catalog/refinitiv-data-platform/refinitiv-data-platform-apis) (aka Data Platform, RDP) on the Cloud. No desktop app needed.
 
-That is when the "Platform Session" comes in. This session connects and consumes data from the [Delivery Platform](https://developers.lseg.com/en/api-catalog/refinitiv-data-platform/refinitiv-data-platform-apis) (aka Data Platform, or RDP) on the Cloud. It is suitable for Container application which can be run anywhere.
+For containerized applications, we use **Platform Session** because:
+1. Containers can't access the Workspace desktop applications running on your host computer
+2. Platform Session consumes data from cloud
+3. Your container can run anywhere with internet access
 
-## Why not using get_data method?
+## Understanding the Technical Setup
+
+### Why not using get_data method?
 
 You might wondering why I am not demonstrating with the ```ld.get_data()``` method. I found that the ```ld.get_data()``` works best with the Desktop session. The [Content Layer - Pricing object](https://cdn.refinitiv.com/public/lseg-lib-python-doc/2.0.0.2/book/en/sections/content-layer/pricing/about-pricing.html) is more suitable for the Platform Session.
 
-## Dockerfile
+### About the Dockerfile
 
-I am using a basic single stage Dockerfile as follows:
+Think of a Dockerfile as a recipe for building your application's container. This project uses a simple approach to:
 
-```ini
-ARG PYTHON_VERSION=3.12
-ARG VARIANT=slim-bookworm
-FROM docker.io/python:${PYTHON_VERSION}-${VARIANT}
+1. Start with a pre-made Python environment (Python 3.12)
+2. Install the required Python packages
+3. Copy your application files
+4. Set up the container to run your application automatically
 
-LABEL maintainer="LSEG Developer Relations"
+**Note about SSL certificates:** 
 
-COPY requirements.txt .
-
-# install dependencies to the local user directory (eg. /root/.local)
-#RUN pip install --upgrade pip && \
-#    pip install --no-cache-dir --user -r requirements.txt
-RUN pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir --upgrade pip && \
-    pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir --no-warn-script-location --user -r requirements.txt
-
-WORKDIR /app
-
-# Update PATH environment variable + set Python buffer to make Docker print every message instantly.
-ENV PATH=/root/.local:$PATH \
-    PYTHONUNBUFFERED=1\
-    PYTHONIOENCODING=utf-8\
-    PYTHONLEGACYWINDOWSSTDIO=utf-8
-#Copy application files
-COPY ["ld_app.py", "lseg-data.config.json", "/app/"]
-
-#Run Python
-ENTRYPOINT ["python", "/app/ld_app.py"]
-```
-
-The use of ```--trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir``` command is to avoid LSEG beloved [Zscaler](https://www.zscaler.com/) that blocks access to [PyPI](https://pypi.org/) repository by default (don't ask me why). 
+The use of ```--trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir``` command inside a Dockerfile is to avoid LSEG beloved [Zscaler](https://www.zscaler.com/) that blocks access to [PyPI](https://pypi.org/) repository by default (don't ask me why). 
 
 The command bypass SSL certificate verification. If you need the SSL verification, please change Dockerfile's ```RUN``` commands to the following statements:
 
@@ -87,13 +88,18 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir --user -r requirements.txt
 ```
 
-## How to run an application with Containerization Tool
+## Step-by-Step: Running Your Application
 
-I am demonstrating with Podman (```podman``` command), but you can change it to ```docker``` if you are using Docker.
+Follow these steps to build and run your containerized application. The examples use ```podman``` commands, but if you're using Docker, simply replace ```podman``` with ```docker```.
 
-The first step is to unzip or download the example project folder into a directory of your choice. 
+### Step 1: Download the Project
 
-1. Open the ```lseg_data.config.json``` file and add your RDP information based on your preference
+Download or unzip this project to a folder on your computer.
+
+### Step 2: Configure Your Credentials
+
+1. Open the **lseg_data.config.json** file in a text editor
+2. Add your LSEG credentials:
 
     ```json
     "sessions": {
@@ -114,49 +120,68 @@ The first step is to unzip or download the example project folder into a directo
         }
     }
     ```
-2. Please note that the ```platform``` configuration is based on your connection information:
-    
-    - if you are using the RDP with the *Version 1 Authentication* (Machine-ID), the ```default``` value must be ```platform.ldp```.
-    - if you are using the RDP with the *Version 2 Authentication* (Service-ID), the ```default``` value must be ```platform.ldpv2```.
 
-3. Open a command prompt application and go to the project folder
-4. Run the following command in a console to build an image from a Dockerfile.
+3. **Important:** Choose the correct authentication version:
+    - **Version 1 (Machine-ID)**: Set `"default"` to `"platform.ldp"`
+    - **Version 2 (Service-ID)**: Set `"default"` to `"platform.ldpv2"`
+
+### Step 3: Build Your Container Image
+
+1. Open a command prompt or terminal
+2. Navigate to the project folder
+3. Run this command to build the container image:
 
     ```bash
     podman build -t ld_app .
     ```
-5. Once the build is a succeed, you will see a newly created image via a ```podman images``` comand
+
+    This process may take a few minutes as it downloads and installs everything needed.
+
+4. When complete, verify the image was created:
+
+    ```bash
+    podman images
+    ```
+
+    You should see `ld_app` in the list.
 
     ![figure-1](images/ld_docker_1.png "ld library python app image is created")
 
-6. Run a container of this *ld_app* image with the following command
+### Step 4: Run Your Application
 
-    ```bash
-    podman run -it --name ld_app  ld_app
-    ```
+Start the container with this command:
 
-    ![figure-2](images/ld_docker_2.png "run ld_app container")
+```bash
+podman run -it --name ld_app ld_app
+```
 
-7. Press ```Ctrl+C``` to stop an application.
-8. To delete a container, run the following command
+Your application will now run and connect to LSEG's data platform!
 
-    ```bash
-    podman rm ld_app
-    ```
+![figure-2](images/ld_docker_2.png "run ld_app container")
 
-    ![figure-3](images/ld_docker_3.png "deleting ld_app container")
+**To stop the application:** Press `Ctrl+C`
 
-9. To delete the *ld_app* image, run the following command (after you have deleted its containers)
+### Step 5: Cleanup (Optional)
 
-    ```bash
-    podman rmi ld_all
-    ```
+When you're done, you can remove the container and image:
 
-    ![figure-4](images/ld_docker_4.png "deleting ld_app image")
+**Remove the container:**
+```bash
+podman rm ld_app
+```
 
-## <a id="references"></a>References
+![figure-3](images/ld_docker_3.png "deleting ld_app container")
 
-For further details, please check out the following resources:
+**Remove the image:**
+```bash
+podman rmi ld_app
+```
+
+![figure-4](images/ld_docker_4.png "deleting ld_app image")
+
+## Additional Resources
+
+Want to dive deeper? Here are some helpful resources:
 
 - [LSEG Data Library for Python](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python)
 - [Data Platform](https://developers.lseg.com/en/api-catalog/refinitiv-data-platform/refinitiv-data-platform-apis)
