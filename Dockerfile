@@ -7,7 +7,7 @@ LABEL maintainer="LSEG Developer Relations"
 COPY requirements.txt .
 
 # install dependencies to the local user directory (eg. /root/.local)
-#RUN --upgrade pip && \
+#RUN pip install --upgrade pip && \
 #    pip install --no-cache-dir --user -r requirements.txt
 RUN pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir --upgrade pip && \
     pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir --no-warn-script-location --user -r requirements.txt
