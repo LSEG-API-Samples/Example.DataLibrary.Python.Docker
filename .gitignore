@@ -3,3 +3,4 @@ lseg-data-devrel.config.json
 lseg-data.config.json_bk
 venv/
 *.log
+testapp.py
