@@ -175,6 +175,14 @@ podman rmi ld_app
 
 ![figure-4](images/ld_docker_4.png "deleting ld_app image")
 
+## What if I am using Docker?
+
+The project supports both Podman and Docker Containerization tool. I have tested the project with Docker and it works fine.
+
+![figure-5](images/ld_docker_mac_1.png "docker image result")
+
+![figure-6](images/ld_docker_mac_2.png "docker container run result")
+
 ## Additional Resources
 
 Want to dive deeper? Here are some helpful resources:

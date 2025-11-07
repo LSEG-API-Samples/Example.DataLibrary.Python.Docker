@@ -5,3 +5,4 @@ venv/
 *.log
 testapp.py
 testapp_session.py
+.DS_Store
