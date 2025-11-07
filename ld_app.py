@@ -10,7 +10,7 @@
 import sys
 import warnings
 import lseg.data as ld 
-from lseg.data.content import pricing
+from lseg.data import session
 
 # Only ignore deprecation warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning)
@@ -46,8 +46,8 @@ def get_historical_interday_data(instruments, fields):
 def get_price_data(instruments, fields):
     """ This method gets snapshot pricing data from RDP """
     print(f'Getting Snapshot Price data for {instruments} fields = {fields}')
-    response = pricing.Definition(universe=instruments,fields=fields).get_data()
-    print(response.data.df)
+    data = ld.get_data(instruments, fields)
+    print(data)
 
 if __name__ == '__main__':
     universes = ['THB=', 'JPY=']  # NVIDIA RIC Code
@@ -56,7 +56,7 @@ if __name__ == '__main__':
         # Open the data session
         ld.open_session()
         #ld.open_session(config_name='./lseg-data-devrel.config.json')
-        session = ld.session.Definition().get_session()
+        session = ld.session.get_default()
         session.open()
         if str(session.open_state) == 'OpenState.Opened':
             print('Session is opened')

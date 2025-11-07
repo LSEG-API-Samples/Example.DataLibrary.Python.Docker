@@ -64,10 +64,6 @@ For containerized applications, we use **Platform Session** because:
 
 ## Understanding the Technical Setup
 
-### Why not using get_data method?
-
-You might wondering why I am not demonstrating with the ```ld.get_data()``` method. I found that the ```ld.get_data()``` works best with the Desktop session. The [Content Layer - Pricing object](https://cdn.refinitiv.com/public/lseg-lib-python-doc/2.0.0.2/book/en/sections/content-layer/pricing/about-pricing.html) is more suitable for the Platform Session.
-
 ### About the Dockerfile
 
 Think of a Dockerfile as a recipe for building your application's container. This project uses a simple approach to:
