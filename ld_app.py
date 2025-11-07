@@ -46,7 +46,7 @@ def get_historical_interday_data(instruments, fields):
 def get_price_data(instruments, fields):
     """ This method gets snapshot pricing data from RDP """
     print(f'Getting Snapshot Price data for {instruments} fields = {fields}')
-    data = ld.get_data(instruments, fields)
+    data = ld.get_data(universe=instruments, fields=fields)
     print(data)
 
 if __name__ == '__main__':
