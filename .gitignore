@@ -4,3 +4,4 @@ lseg-data.config.json_bk
 venv/
 *.log
 testapp.py
+testapp_session.py
