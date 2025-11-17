@@ -1,4 +1,9 @@
-# How to Run Data Library for Python in Docker
+# How to Run Data Library for Python in Containerization tool
+
+- Last update: November 2025
+- Environment: Any with Python support 
+- Compiler: Python
+- Prerequisite: Delivery Platform (RDP) Access Credentials
 
 ## Overview
 
@@ -55,7 +60,7 @@ The Data Library are available in the following programming languages:
 The Data Library can connect to data in different ways:
 
 - **Desktop Session**: Requires the LSEG Workspace desktop application running on your computer
-- **Platform Session**: Connects directly to LSEG's [Delivery Platform](https://developers.lseg.com/en/api-catalog/refinitiv-data-platform/refinitiv-data-platform-apis) (aka Data Platform, RDP) on the Cloud. No desktop app needed.
+- **Platform Session**: Connects directly to LSEG's [Delivery Platform](https://developers.lseg.com/en/api-catalog/refinitiv-data-platform/refinitiv-data-platform-apis) (aka Data Platform, RDP) on the Cloud or the Real-Time Platform (on-prem or Cloud hosted). No desktop app needed.
 
 For containerized applications, we use **Platform Session** because:
 1. Containers can't access the Workspace desktop applications running on your host computer
