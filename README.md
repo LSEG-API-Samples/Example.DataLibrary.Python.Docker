@@ -50,7 +50,7 @@ The Data Library are available in the following programming languages:
 - [Step-by-Step Tutorials](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python/tutorials)
 - [Code Examples on GitHub](https://github.com/LSEG-API-Samples/Example.DataLibrary.Python)
 
-## Why Use "Platform Session" for Containers?
+## Why Use "Platform Session" Access Point for Containers?
 
 The Data Library can connect to data in different ways:
 
@@ -61,6 +61,12 @@ For containerized applications, we use **Platform Session** because:
 1. Containers can't access the Workspace desktop applications running on your host computer
 2. Platform Session consumes data from cloud
 3. Your container can run anywhere with internet access
+
+## What If I Am Using the Real-Time Platform Access Point?
+
+Yes, you can containerize your Data Library application if you are connecting to your Real-Time Distribution System (RTDS). The container can connect to on-prem RTDS and Cloud/LSEG hosted RTDS. 
+
+The local RTDS also supports containerization too. 
 
 ## Understanding the Technical Setup
 
