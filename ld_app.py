@@ -50,8 +50,6 @@ def get_price_data(instruments, fields):
     print(data)
 
 if __name__ == '__main__':
-    universes = ['THB=', 'JPY=']  # NVIDIA RIC Code
-    fields=['BID','ASK','OPEN_PRC','HIGH_1','LOW_1','TRDPRC_1','NUM_MOVES','TRNOVR_UNS']
     try:
         # Open the data session
         ld.open_session()
@@ -60,12 +58,14 @@ if __name__ == '__main__':
         session.open()
         if str(session.open_state) == 'OpenState.Opened':
             print('Session is opened')
+            # request snapshot real-time data
             get_price_data(['THB=', 'JPY='],['BID', 'ASK'])
             print()
+            # request historical data
             get_historical_interday_data(
                 instruments=['AMD.O','NVDA.O'],
                 fields=['BID','ASK','OPEN_PRC','HIGH_1','LOW_1','TRDPRC_1','NUM_MOVES','TRNOVR_UNS'])
-           
+        # Close session
         print('Close Session')
         ld.close_session()
     except Exception as ex:

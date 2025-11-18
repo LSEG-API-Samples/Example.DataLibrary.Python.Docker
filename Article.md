@@ -82,6 +82,106 @@ The local RTDS also supports containerization too.
 
 ## Application Source Code
 
+The example application source code uses simple Access Layer methods to get snapshot pricing and historical data.
+
+If you have requirements to get more flexible API interfaces, you can use the Content and Delivery Layers too.
+
+
+```python
+try:
+   # Open the data session
+   ld.open_session()
+   session = ld.session.get_default()
+   session.open()
+   if str(session.open_state) == 'OpenState.Opened':
+      print('Session is opened')
+      # request snapshot real-time data
+      get_price_data(['THB=', 'JPY='],['BID', 'ASK'])
+		
+      print()
+		# request historical data
+      get_historical_interday_data(
+         instruments=['AMD.O','NVDA.O'],
+         fields=['BID','ASK','OPEN_PRC','HIGH_1','LOW_1','TRDPRC_1','NUM_MOVES','TRNOVR_UNS'])
+      # Close session  
+      print('Close Session')
+      ld.close_session()
+except Exception as ex:
+    print(f'Error in open_session: {str(ex)}')
+    sys.exit(1)
+```
+
+The code above uses the basic **ld.open_session()** method to load your RDP credential from the **lseg-data.config.json** that should be located on the same location as the code.
+
+```json
+{
+    "logs": {....},
+    "sessions": {
+        "default": "platform.ldp",
+        "platform": {
+            "ldp": {
+                "app-key": "YOUR APP KEY GOES HERE!",
+                "username": "YOUR LDP LOGIN OR MACHINE GOES HERE!",
+                "password": "YOUR LDP PASSWORD GOES HERE!",
+                "signon_control":true
+            },
+            "ldpv2":{
+                "client_id": "Service-ID (Client ID V2)",
+                "client_secret": "Client Secret",
+                "signon_control":true,
+                "app-key": ""
+            }
+        }
+    }
+}
+```
+
+The **get_price_data()** method calls the Data Library **ld.get_data()** method for a snapshot real-time data.
+
+```python
+def get_price_data(instruments, fields):
+    """ This method gets snapshot pricing data from RDP """
+    print(f'Getting Snapshot Price data for {instruments} fields = {fields}')
+    data = ld.get_data(universe=instruments, fields=fields)
+    print(data)
+```
+
+The **get_historical_interday_data()** method calls the Data Library **ld.get_history()** method for a historical data.
+
+```python
+def get_historical_interday_data(instruments, fields):
+    """
+    This method sends a request message to RDP Historical Pricing service.
+
+    Args:
+        universe (str): RIC Code
+
+    Returns: 
+        interday data (Pandas Dataframe): Interday data in DataFrame object
+    """
+    print(f'Getting Historical Pricing Interday data for {instruments} fields = {fields}')
+    # Time Variables
+    interval = 'weekly' #weekly
+    start_day = '2025-10-01'
+    end_day = '2025-11-10'
+
+    # Send request message
+    response = ld.get_history(universe=instruments,
+                        interval=interval, 
+                        fields=fields,
+                        count=15,
+                        start=start_day,
+                        end= end_day)
+    print('This is a Historical Pricing Inter-Day data result from Data Library - Access Layer - get_history method')
+    print(response)
+```
+
+That is all I have to say about the code.
+
+## Dockerfile
+
+[TBD]
+
 - https://medium.com/@ebojacky/back-end-engineering-containerization-for-python-developers-4d79933eb5b0
 - https://circleci.com/blog/benefits-of-containerization/
 - https://aws.amazon.com/what-is/containerization/
