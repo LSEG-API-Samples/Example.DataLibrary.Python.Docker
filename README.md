@@ -150,7 +150,7 @@ Download or unzip this project to a folder on your computer.
     podman images
     ```
 
-    You should see `ld_app` in the list.
+    You should see *ld_app* in the list.
 
     ![figure-1](images/ld_docker_1.png "ld library python app image is created")
 

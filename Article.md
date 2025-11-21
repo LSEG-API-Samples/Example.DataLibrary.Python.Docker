@@ -178,7 +178,147 @@ def get_historical_interday_data(instruments, fields):
 
 That is all I have to say about the code.
 
-## Dockerfile
+## Image, Container, and Dockerfile
+
+An Image is a read-only template or blueprint of your application including source code, runtime, libraries, and configurations. A [Dockerfile](https://docs.docker.com/build/concepts/dockerfile/) (aka Containerfile - for Podman) is like a recipe for creating Image. It contains a step-by-step needed to setup and run a software. 
+
+A Container is instance of Image. It is an actual thing that runs your application.
+
+Summary of key differences.
+
+| Docker Image              | Docker Container            | 
+|---------------------------|-----------------------------|
+| Blueprint                 | Real instance               | 
+| Static/unchanging         | Active/running              | 
+| Storage on disk           | Running in memory           | 
+|Can't execute alone        | Actually does the work      |
+|Create once, use many times| Create from image each time |
+
+**Note**: Podman is fully compatible with Dockerfile.
+
+You can find more details on the following resources:
+
+- [What’s the Difference Between Docker Images and Containers?](https://aws.amazon.com/compare/the-difference-between-docker-images-and-containers/)
+- [Docker image vs container: What are the differences?](https://circleci.com/blog/docker-image-vs-container/)
+- [Running a pod using a container or docker file](https://podman-desktop.io/tutorial/running-a-pod-using-a-container-docker-file)
+
+## Data Library for Python Dockerfile
+
+I am demonstrating the Data Library for Python Dockerfile (or Containerfile) using a **single-stage build** which is a simplest way to create an Image. The single-stage build means all instructions for building and running an application are contained in one Dockerfile stage. An intention is to make it easy to understand as much as possible.
+
+```Dockerfile
+ARG PYTHON_VERSION=3.12
+ARG VARIANT=slim-bookworm
+FROM docker.io/python:${PYTHON_VERSION}-${VARIANT}
+
+LABEL maintainer="LSEG Developer Relations"
+
+COPY requirements.txt .
+
+# install dependencies to the local user directory (eg. /root/.local)
+RUN pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir --upgrade pip && \
+    pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir --no-warn-script-location --user -r requirements.txt
+
+WORKDIR /app
+
+# Update PATH environment variable + set Python buffer to make Docker print every message instantly.
+ENV PATH=/root/.local:$PATH \
+    PYTHONUNBUFFERED=1\
+    PYTHONIOENCODING=utf-8\
+    PYTHONLEGACYWINDOWSSTDIO=utf-8
+#Copy application files
+COPY ["ld_app.py", "lseg-data.config.json", "/app/"]
+
+#Run Python
+ENTRYPOINT ["python", "/app/ld_app.py"]
+```
+
+The first instruction is define a **FROM** instruction to specify the base image to use. I am using the **ARG** [build arguments](https://docs.docker.com/build/building/variables/#arg-usage-example) to set the Python version and variant.
+
+```Dockerfile
+ARG PYTHON_VERSION=3.12
+ARG VARIANT=slim-bookworm
+FROM docker.io/python:${PYTHON_VERSION}-${VARIANT}
+```
+
+I am using Python 3.12 with a slim version Debian 12 (Bookworm) OS. I am not using the *Alpine* which is the lightest variant because it is hard to install [Pandas](https://pandas.pydata.org/) which is required for the Data Library for Python.
+
+The next step is copy Python dependencies file [requirements.txt](https://pip.pypa.io/en/stable/reference/requirements-file-format/) to the image and run **pip install* to install all project dependencies.
+
+```Dockerfile
+COPY requirements.txt .
+
+# install dependencies to the local user directory (eg. /root/.local)
+RUN pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir --upgrade pip && \
+    pip install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org --no-cache-dir --no-warn-script-location --user -r requirements.txt
+```
+
+Please be noticed that I am using **--trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host pypi.org** arguments to **workaround** LSEG beloved ZScaler that blocks access to [PyPI](https://pypi.org/) repository. If your environment does have this stupid limitation, please use the following instructions instead.
+
+```Dockerfile
+COPY requirements.txt .
+
+# install dependencies to the local user directory (eg. /root/.local)
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir --user -r requirements.txt
+```
+
+Next, I am setting an Image environment variables about the character encoding and stdout/stderr on the terminal console. I also set the working directory of an Image.
+
+```Dockerfile
+WORKDIR /app
+
+# Update PATH environment variable + set Python buffer to make Docker print every message instantly.
+ENV PATH=/root/.local:$PATH \
+    PYTHONUNBUFFERED=1\
+    PYTHONIOENCODING=utf-8\
+    PYTHONLEGACYWINDOWSSTDIO=utf-8
+```
+
+Then I am copying the source code **ld_app.py** and **lseg-data.config.json** configuration file to an Image.
+
+```Dockerfile
+#Copy application files
+COPY ["ld_app.py", "lseg-data.config.json", "/app/"]
+```
+
+And lastly, I use the **ENTRYPOINT** ([reference](https://docs.docker.com/reference/dockerfile/#entrypoint)) to run a python application.
+
+```Dockerfile
+#Run Python
+ENTRYPOINT ["python", "/app/ld_app.py"]
+```
+
+Now this Dockerfile/Containerfile is ready to create an Image.
+
+For references about Dockerfile/Containerfile, please see the following resources:
+
+- [Write your first Containerfile for Podman](https://www.redhat.com/en/blog/write-your-first-containerfile-podman)
+- [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
+
+## Creating An Image
+
+Now we come to Image building steps. I am demonstrating with [podman-build] command, but if you're using Docker, simply replace ***podman*** with ***docker***.
+
+The first step to build Image is open a command prompt or terminal application and navigate to the project folder, then run the following command to create an Image name *ld_app*.
+
+```bash
+podman build -t ld_app .
+```
+
+This process may take a few minutes as it downloads and installs everything needed.
+
+When complete, verify the image was created with the following command:
+
+```bash
+podman images
+```
+
+You should see *ld_app* Image in the list.
+
+![figure-2](images/ld_docker_1.png "ld library python app image is created")
+
+That’s all I have to say about how to build an Image.
 
 [TBD]
 
