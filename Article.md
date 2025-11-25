@@ -296,7 +296,7 @@ For references about Dockerfile/Containerfile, please see the following resource
 - [Write your first Containerfile for Podman](https://www.redhat.com/en/blog/write-your-first-containerfile-podman)
 - [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
 
-## Creating An Image
+## Step 1: Creating An Image
 
 Now we come to Image building steps. I am demonstrating with [podman-build] command, but if you're using Docker, simply replace ***podman*** with ***docker***.
 
@@ -320,9 +320,107 @@ You should see *ld_app* Image in the list.
 
 That’s all I have to say about how to build an Image.
 
-[TBD]
+## Step 2: Running A Container
 
-- https://medium.com/@ebojacky/back-end-engineering-containerization-for-python-developers-4d79933eb5b0
-- https://circleci.com/blog/benefits-of-containerization/
-- https://aws.amazon.com/what-is/containerization/
-- https://www.ibm.com/think/insights/the-benefits-of-containerization-and-what-it-means-for-you
+Now, what about how to run a Container from this newly created Image. You can run a Container with the following command:
+
+```bash
+podman run -it --name ld_app ld_app
+```
+
+**Note**: Please let me remind you, use ```docker``` instead of ```podman``` if you are using Docker.
+
+Your application will now run and connect to LSEG's data platform!
+
+![figure-3](images/ld_docker_2.png "run ld_app container")
+
+To stop a Container, press ```Ctrl+C``` button or run ```podman stop ld_app``` command.
+
+Please see more detail on [podman stop](https://docs.podman.io/en/stable/markdown/podman-stop.1.html) command document.
+
+## Step 3: Cleanup (Optional)
+
+That brings us to clean up a Container. Once you have stopped a Container, you cannot run a Container with the same name until you delete it (or just change a Container name). 
+
+You can delete a Container with the following command:
+
+```bash
+podman rm ld_app
+```
+
+Please see more detail on [podman rm](https://docs.podman.io/en/stable/markdown/podman-rm.1.html) and [podman container cleanup](https://docs.podman.io/en/stable/markdown/podman-container-cleanup.1.html) commands documents.
+
+![figure-4](images/ld_docker_3.png "deleting ld_app container")
+
+Optionally, you can delete an Image with the following command (all associated Containers must be removed).
+
+```bash
+podman rmi ld_app
+```
+
+![figure-5](images/ld_docker_4.png "deleting ld_app image")
+
+You can find more detail about this command on the [podman rmi](https://docs.podman.io/en/latest/markdown/podman-rmi.1.html) document page.
+
+That covers how to run and cleanup Container.
+
+## What if I am using Docker?
+
+The Containerfile/Dockerfile supports Docker Containerization tool. You can just replace the ```podman``` command on step 1,2, and 3 with ```docker```.  I have tested the project with Docker and it works fine.
+
+![figure-6](images/ld_docker_mac_1.png "docker image result")
+
+![figure-7](images/ld_docker_mac_2.png "docker container run result")
+
+## Conclusion
+
+Congratulations! You've successfully containerized a Data Library for Python application. You now have a portable, self-contained package that can run consistently across different environments—from your local development machine to production servers or cloud platforms.
+
+### What You've Accomplished
+
+In this article, you learned how to:
+
+- **Package a Python application** with all its dependencies into a container image
+- **Connect to LSEG's Data Platform** from within a containerized environment
+- **Build and run containers** using either Docker or Podman
+- **Understand key concepts** like Images, Containers, and Dockerfile/Containerfile
+
+### Key Benefits You Can Now Leverage
+
+By containerizing your Data Library application, you've unlocked several advantages:
+
+- **Consistency**: Your application will run the same way regardless of where you deploy it
+- **Portability**: Easily move your application between development, testing, and production environments
+- **Isolation**: Your application and its dependencies won't conflict with other software on your system
+- **Simplified Deployment**: Deploy to cloud platforms or on-premises servers with minimal configuration
+- **Reproducibility**: Share your containerized application with team members who can run it immediately
+
+### Next Steps
+
+Now that you understand the basics of containerization, consider exploring:
+
+- **Multi-stage builds** to create smaller, more optimized images
+- **Docker Compose or Podman Compose** for managing multi-container applications
+- **Cloud deployment** to platforms like AWS, Azure, or Google Cloud
+- **Orchestration tools** like Kubernetes for managing containers at scale
+- **CI/CD pipelines** to automate building and deploying your containers
+
+## References
+
+For more information about containerization and LSEG Data Library:
+
+- [LSEG Data Library for Python](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python) page on the [LSEG Developers Portal](https://developers.lseg.com/en) website.
+- [LSEG Data Library for Python Documentation](https://developers.lseg.com/en/api-catalog/lseg-data-platform/lseg-data-library-for-python/documentation).
+- [LSEG Data Library Examples on GitHub](https://github.com/LSEG-API-Samples/Example.DataLibrary.Python).
+- [LSEG Delivery Platform](https://developers.lseg.com/en/api-catalog/refinitiv-data-platform/refinitiv-data-platform-apis).
+- [Podman Documentation](https://docs.podman.io/en/latest/).
+- [Getting Started with Podman](https://podman.io/docs).
+- [Docker Documentation](https://docs.docker.com/).
+- [Getting Started with Docker](https://docs.docker.com/get-started/)
+- [Benefits of Containerization](https://circleci.com/blog/benefits-of-containerization/)
+- [What is Containerization? - AWS](https://aws.amazon.com/what-is/containerization/)
+- [Containerization for Python Developers](https://medium.com/@ebojacky/back-end-engineering-containerization-for-python-developers-4d79933eb5b0)
+- [The Benefits of Containerization - IBM](https://www.ibm.com/think/insights/the-benefits-of-containerization-and-what-it-means-for-you)
+
+
+For any questions related to this example or the LSEG Data Library, please use the Developer Community [Q&A Forum](https://community.developers.refinitiv.com/).
